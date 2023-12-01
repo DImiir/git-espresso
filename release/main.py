@@ -1,15 +1,16 @@
 import sys
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from PyQt6 import uic
 import sqlite3
+from UI.ui_main import Ui_main
+from UI.addEditCoffeeForm import Ui_addEditCoffeeForm
 
 
-class Espresso(QMainWindow):
+class Espresso(QMainWindow, Ui_main):
     def __init__(self):
         super().__init__()
         self.Window = None
-        uic.loadUi('main.ui', self)
-        con = sqlite3.connect("coffee.sqlite")
+        self.setupUi(self)
+        con = sqlite3.connect("data/coffee.sqlite")
         cur = con.cursor()
         from_db = cur.execute("""SELECT * FROM infoffee""").fetchall()
         con.close()
@@ -28,17 +29,17 @@ class Espresso(QMainWindow):
         self.Window.show()
 
 
-class AddChange(QMainWindow):
+class AddChange(QMainWindow, Ui_addEditCoffeeForm):
     def __init__(self):
         super().__init__()
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.Window = None
         self.add_btn.clicked.connect(self.add_func)
         self.change_btn.clicked.connect(self.change_func)
         self.back_btn.clicked.connect(self.back_func)
 
     def add_func(self):
-        con = sqlite3.connect('coffee.sqlite')
+        con = sqlite3.connect('data/coffee.sqlite')
         cur = con.cursor()
         count = cur.execute(f"""SELECT ID FROM infoffee""").fetchall()
         if len(count) == 0:
@@ -55,7 +56,7 @@ class AddChange(QMainWindow):
         con.close()
 
     def change_func(self):
-        con = sqlite3.connect('coffee.sqlite')
+        con = sqlite3.connect('data/coffee.sqlite')
         cur = con.cursor()
         cur.execute(f"""UPDATE infoffee
                         SET name = ?, stepen = ?, condition = ?, taste = ?, price = ?, volume = ?
